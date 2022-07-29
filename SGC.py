@@ -950,12 +950,12 @@ def load_ACTIVITY_RASTER_mat(filename):
     
     __ACTIVITY_RASTER_mat = {
         'activity_raster': None,
-        'activity_raster_threshold': None,
+        'activity_raster_peak_threshold': None,
         'activity_raster_peaks': None
     }
     
     __ACTIVITY_RASTER_mat['activity_raster'] = ACTIVITY_RASTER_mat['activity_raster']
-    __ACTIVITY_RASTER_mat['activity_raster_threshold'] = ACTIVITY_RASTER_mat['activity_raster_threshold'][0][0]
+    __ACTIVITY_RASTER_mat['activity_raster_peak_threshold'] = ACTIVITY_RASTER_mat['activity_raster_peak_threshold'][0][0]
     __ACTIVITY_RASTER_mat['activity_raster_peaks'] = ACTIVITY_RASTER_mat['activity_raster_peaks']
 
 
@@ -1080,7 +1080,7 @@ def CALCIUM_FLUORESCENCE_PROCESSING(CALCIUM_FLUORESCENCE_file):
             sig_dF_F_activity, sig_dF_F_coactivity_threshold, sig_dF_F_coactivity_peaks = findSignificantDF_FCoactivity(CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['dF_F']);
 
             OUT['activity_raster'] = sig_dF_F_activity;
-            OUT['activity_raster_threshold'] = sig_dF_F_coactivity_threshold;
+            OUT['activity_raster_peak_threshold'] = sig_dF_F_coactivity_threshold;
             OUT['activity_raster_peaks'] = sig_dF_F_coactivity_peaks;
             
 
