@@ -1017,7 +1017,7 @@ def load_SGC_ASSEMBLIES_mat(filename):
     __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['assignment'] = list(map(lambda I: I-int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['assignment']))
     
     for r in range(len(__SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'])):
-        __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'][r]['E'] -= int(MATLAB_INDEXING_COMPATIBILITY)
+        __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'][r]['g'] -= int(MATLAB_INDEXING_COMPATIBILITY)
 
     __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['assemblyIActivityPatterns'] = list(map(lambda I: I-int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['assemblyIActivityPatterns']))
     __SGC_ASSEMBLIES_mat['assemblies'] = list(map(lambda I: I-int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assemblies']))
@@ -1034,7 +1034,7 @@ def save_SGC_ASSEMBLIES_mat(filename, SGC_ASSEMBLIES_mat):
     __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['assignment'] = list(map(lambda I: I+int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['assignment']))
     
     for r in range(len(__SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'])):
-        __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'][r]['E'] += int(MATLAB_INDEXING_COMPATIBILITY)
+        __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['patternSimilarityAnalysis']['communityStructure']['markovChainMonteCarloSamples'][r]['g'] += int(MATLAB_INDEXING_COMPATIBILITY)
 
     __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['assemblyIActivityPatterns'] = list(map(lambda I: I+int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assembly_pattern_detection']['assemblyIActivityPatterns']))
     __SGC_ASSEMBLIES_mat['assemblies'] = list(map(lambda I: I+int(MATLAB_INDEXING_COMPATIBILITY), __SGC_ASSEMBLIES_mat['assemblies']))
