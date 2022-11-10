@@ -884,6 +884,30 @@ def normalisePatternEnumeration(pattern):
     return OUT
 
 
+def generate_CALCIUM_FLUORESCENCE_mat(filename, dF_F_array, **kwargs):
+    
+    CALCIUM_FLUORESCENCE_mat = {
+        'calcium_fluorescence': {
+            'dF_F': dF_F_array
+        },
+        'topology': None,
+        'parameter': {
+            'units': dF_F_array.shape[1],
+            'dT_step': None,
+            'time_steps': dF_F_array.shape[0],
+            'calcium_T1_2': None,
+        }
+    }
+    
+    if 'topology' in kwargs:
+        CALCIUM_FLUORESCENCE_mat['topology'] = kwargs['topology']
+    if 'imaging_frequeny' in kwargs:
+        CALCIUM_FLUORESCENCE_mat['parameter']['dT_step'] = 1/kwargs['imaging_frequeny']
+    if 'ca_indicator_halflife' in kwargs:
+        CALCIUM_FLUORESCENCE_mat['parameter']['calcium_T1_2'] = 1/kwargs['ca_indicator_halflife']
+
+    save_CALCIUM_FLUORESCENCE_mat(filename, CALCIUM_FLUORESCENCE_mat)
+
 def load_CALCIUM_FLUORESCENCE_mat(filename):
     
     CALCIUM_FLUORESCENCE_mat = scipy.io.loadmat(filename, struct_as_record=False, squeeze_me=True)
@@ -911,29 +935,44 @@ def load_CALCIUM_FLUORESCENCE_mat(filename):
         'meta_information': None
     }
 
-    __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['F'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].F
-    __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['F0'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].F0
-    __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['dF_F'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].dF_F
+    if 'F' in CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['F'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].F
+    if 'F0' in CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['F0'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].F0
+    if 'dF_F' in CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['calcium_fluorescence']['dF_F'] = CALCIUM_FLUORESCENCE_mat['calcium_fluorescence'].dF_F
     
-    __CALCIUM_FLUORESCENCE_mat['topology'] = [_.astype('float') for _ in list(CALCIUM_FLUORESCENCE_mat['topology'])]
+    if 'topology' in CALCIUM_FLUORESCENCE_mat:
+        __CALCIUM_FLUORESCENCE_mat['topology'] = [_.astype('float') for _ in list(CALCIUM_FLUORESCENCE_mat['topology'])]
     
-    __CALCIUM_FLUORESCENCE_mat['parameter']['units'] = CALCIUM_FLUORESCENCE_mat['parameter'].units
-    __CALCIUM_FLUORESCENCE_mat['parameter']['dT_step'] = CALCIUM_FLUORESCENCE_mat['parameter'].dT_step
-    __CALCIUM_FLUORESCENCE_mat['parameter']['time_steps'] = CALCIUM_FLUORESCENCE_mat['parameter'].time_steps
-    if isinstance(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration, np.ndarray):
-        if len(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration) > 1:
-            __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = list(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration)
-        else:
-            __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = [CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration]
-    __CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'] = CALCIUM_FLUORESCENCE_mat['parameter'].rate_range
-    if isinstance(__CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'], np.ndarray):
-        __CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'] = tuple(__CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'])
-    __CALCIUM_FLUORESCENCE_mat['parameter']['eventDuration'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventDuration
-    __CALCIUM_FLUORESCENCE_mat['parameter']['eventFreq'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventFreq
-    __CALCIUM_FLUORESCENCE_mat['parameter']['eventMult'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventMult
-    __CALCIUM_FLUORESCENCE_mat['parameter']['calcium_T1_2'] = CALCIUM_FLUORESCENCE_mat['parameter'].calcium_T1_2
-    __CALCIUM_FLUORESCENCE_mat['parameter']['saturation_K'] = CALCIUM_FLUORESCENCE_mat['parameter'].saturation_K
-    __CALCIUM_FLUORESCENCE_mat['parameter']['noiseSTD'] = CALCIUM_FLUORESCENCE_mat['parameter'].noiseSTD
+    if 'units' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['units'] = CALCIUM_FLUORESCENCE_mat['parameter'].units
+    if 'dT_step' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['dT_step'] = CALCIUM_FLUORESCENCE_mat['parameter'].dT_step
+    if 'time_steps' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['time_steps'] = CALCIUM_FLUORESCENCE_mat['parameter'].time_steps
+    if 'assembly_configuration' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        if isinstance(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration, np.ndarray):
+            if len(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration) > 1:
+                __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = list(CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration)
+            else:
+                __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = [CALCIUM_FLUORESCENCE_mat['parameter'].assembly_configuration]
+    if 'rate_range' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'] = CALCIUM_FLUORESCENCE_mat['parameter'].rate_range
+        if isinstance(__CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'], np.ndarray):
+            __CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'] = tuple(__CALCIUM_FLUORESCENCE_mat['parameter']['rate_range'])
+    if 'eventDuration' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['eventDuration'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventDuration
+    if 'eventFreq' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['eventFreq'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventFreq
+    if 'eventMult' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['eventMult'] = CALCIUM_FLUORESCENCE_mat['parameter'].eventMult
+    if 'calcium_T1_2' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['calcium_T1_2'] = CALCIUM_FLUORESCENCE_mat['parameter'].calcium_T1_2
+    if 'saturation_K' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['saturation_K'] = CALCIUM_FLUORESCENCE_mat['parameter'].saturation_K
+    if 'noiseSTD' in CALCIUM_FLUORESCENCE_mat['parameter']._fieldnames:
+        __CALCIUM_FLUORESCENCE_mat['parameter']['noiseSTD'] = CALCIUM_FLUORESCENCE_mat['parameter'].noiseSTD
     
     if 'meta_information' in CALCIUM_FLUORESCENCE_mat:
         __CALCIUM_FLUORESCENCE_mat['meta_information'] = {fieldname: fieldvalue for fieldname, fieldvalue in CALCIUM_FLUORESCENCE_mat['meta_information'].__dict__.items() if not fieldname == '_fieldnames'}
@@ -949,14 +988,14 @@ def load_CALCIUM_FLUORESCENCE_mat(filename):
     
     return __CALCIUM_FLUORESCENCE_mat
 
-
 def save_CALCIUM_FLUORESCENCE_mat(filename, CALCIUM_FLUORESCENCE_mat):
     
     __CALCIUM_FLUORESCENCE_mat = CALCIUM_FLUORESCENCE_mat
     
     # Ensure compatibility with MATLAB with regard to 1-based indexing
-    if __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] is not None:
-        __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = list(map(lambda I: I+int(MATLAB_INDEXING_COMPATIBILITY), __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration']))
+    if 'assembly_configuration' in __CALCIUM_FLUORESCENCE_mat['parameter']:
+        if __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] is not None:
+            __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = list(map(lambda I: I+int(MATLAB_INDEXING_COMPATIBILITY), __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration']))
     
     # --------------------------------------------------------------------------
 
@@ -970,18 +1009,18 @@ def save_CALCIUM_FLUORESCENCE_mat(filename, CALCIUM_FLUORESCENCE_mat):
     if __CALCIUM_FLUORESCENCE_mat['topology'] is not None:
         __CALCIUM_FLUORESCENCE_mat['topology'] = as_objectarray(__CALCIUM_FLUORESCENCE_mat['topology'])[:,np.newaxis]
     
-    if __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] is not None:
-        __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = as_objectarray(__CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'])[np.newaxis,:]
+    if 'assembly_configuration' in __CALCIUM_FLUORESCENCE_mat['parameter']:
+        if __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] is not None:
+            __CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'] = as_objectarray(__CALCIUM_FLUORESCENCE_mat['parameter']['assembly_configuration'])[np.newaxis,:]
     
     
-    for struct in ['calcium_fluorescence', 'topology', 'parameter']:
-        if isinstance(__CALCIUM_FLUORESCENCE_mat[struct], dict):
-            for fieldname, fieldvalue in __CALCIUM_FLUORESCENCE_mat[struct].items(): 
-                if fieldvalue is None:
-                    __CALCIUM_FLUORESCENCE_mat[struct][fieldname] = np.nan
-        else:
-            if __CALCIUM_FLUORESCENCE_mat[struct] is None:
-                __CALCIUM_FLUORESCENCE_mat[struct] = np.nan
+    for struct in ['calcium_fluorescence', 'parameter']:
+        for fieldname, fieldvalue in __CALCIUM_FLUORESCENCE_mat[struct].items(): 
+            if fieldvalue is None:
+                __CALCIUM_FLUORESCENCE_mat[struct][fieldname] = np.nan
+
+    if __CALCIUM_FLUORESCENCE_mat['topology'] is None:
+        __CALCIUM_FLUORESCENCE_mat['topology'] = []
                 
     if 'meta_information' in __CALCIUM_FLUORESCENCE_mat:
         __CALCIUM_FLUORESCENCE_mat.pop('meta_information')
