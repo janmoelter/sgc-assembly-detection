@@ -31,6 +31,7 @@ from Modules.peakfinder import peakfinder
 from Modules.estimate import estimate
 
 
+SCRIPT_END_INDICATOR = False
 MATLAB_INDEXING_COMPATIBILITY = True
 
 
@@ -1195,13 +1196,15 @@ def CALCIUM_FLUORESCENCE_PROCESSING(CALCIUM_FLUORESCENCE_file):
 
         ## >
 
-        print('>> END PROGRAM', file=sys.stdout);
-        print('>> END PROGRAM', file=sys.stderr);
+        if SCRIPT_END_INDICATOR:
+            print('>> END PROGRAM', file=sys.stdout);
+            print('>> END PROGRAM', file=sys.stderr);
 
     else:
-
-        print('>> END PROGRAM', file=sys.stdout);
-        print('>> END PROGRAM', file=sys.stderr);
+        
+        if SCRIPT_END_INDICATOR:
+            print('>> END PROGRAM', file=sys.stdout);
+            print('>> END PROGRAM', file=sys.stderr);
         
 def SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file):
     
@@ -1243,17 +1246,19 @@ def SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file):
         OUTPUT_PATH = os.path.join(directory, name.replace('_ACTIVITY-RASTER', '_SGC-ASSEMBLIES') + '.mat')
         save_SGC_ASSEMBLIES_mat(OUTPUT_PATH, OUT);
         #os.chmod(OUTPUT_PATH, os.stat(OUTPUT_PATH).st_mode | stat.S_IWGRP);
-    
-        print('>> END PROGRAM', file=sys.stdout);
-        print('>> END PROGRAM', file=sys.stderr);
+
+        if SCRIPT_END_INDICATOR:
+            print('>> END PROGRAM', file=sys.stdout);
+            print('>> END PROGRAM', file=sys.stderr);
 
         return OUT;
         
     else:
         OUT = None;
         
-        print('>> END PROGRAM', file=sys.stdout);
-        print('>> END PROGRAM', file=sys.stderr);
+        if SCRIPT_END_INDICATOR:
+            print('>> END PROGRAM', file=sys.stdout);
+            print('>> END PROGRAM', file=sys.stderr);
 
 
 def calcium_fluorescence_preprocessing(CALCIUM_FLUORESCENCE_file):
@@ -1311,6 +1316,8 @@ if __name__ == "__main__":
 
     # ********************************************************************************
     # Execute main function
+
+    SCRIPT_END_INDICATOR = True
     
     try:
         if __parser_subcommand == 'detection':
