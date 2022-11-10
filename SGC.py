@@ -1,3 +1,17 @@
+
+__all__ = [
+    'load_CALCIUM_FLUORESCENCE_mat',
+    'save_CALCIUM_FLUORESCENCE_mat',
+    'generate_CALCIUM_FLUORESCENCE_mat',
+    'load_ACTIVITY_RASTER_mat',
+    'save_ACTIVITY_RASTER_mat',
+    'load_SGC_ASSEMBLIES_mat',
+    'save_SGC_ASSEMBLIES_mat',
+    'calcium_fluorescence_preprocessing',
+    'assembly_detection',
+]
+
+
 import os
 import sys
 
@@ -1241,6 +1255,12 @@ def SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file):
         print('>> END PROGRAM', file=sys.stdout);
         print('>> END PROGRAM', file=sys.stderr);
 
+
+def calcium_fluorescence_preprocessing(CALCIUM_FLUORESCENCE_file):
+    CALCIUM_FLUORESCENCE_PROCESSING(CALCIUM_FLUORESCENCE_file)
+
+def assembly_detection(ACTIVITY_RASTER_file):
+    SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file)
 
 
 if __name__ == "__main__":
