@@ -1055,7 +1055,7 @@ def load_ACTIVITY_RASTER_mat(filename):
     
     __ACTIVITY_RASTER_mat['activity_raster'] = ACTIVITY_RASTER_mat['activity_raster']
     __ACTIVITY_RASTER_mat['activity_raster_peak_threshold'] = ACTIVITY_RASTER_mat['activity_raster_peak_threshold'][0][0]
-    __ACTIVITY_RASTER_mat['activity_raster_peaks'] = ACTIVITY_RASTER_mat['activity_raster_peaks']
+    __ACTIVITY_RASTER_mat['activity_raster_peaks'] = np.squeeze(ACTIVITY_RASTER_mat['activity_raster_peaks'])
 
 
     # Ensure compatibility with MATLAB with regard to 1-based indexing
