@@ -34,6 +34,21 @@ from Modules.estimate import estimate
 SCRIPT_END_INDICATOR = False
 MATLAB_INDEXING_COMPATIBILITY = True
 
+# ********************************************************************************
+# Runtime Parameters
+
+PREPROCESSING_PARAMETERS = {
+    'standard_deviations_threshold': 2,
+    'shuffling_rounds': 1000,
+    'coactivity_significance_level': 0.05,
+}
+
+DETECTION_PARAMETERS = {
+    'montecarlo_rounds': 5,
+    'montecarlo_steps': 50000,
+    'affinity_threshold': 0.2,
+}
+
 
 class runtimer(object):
     
@@ -193,7 +208,7 @@ def findSignificantDF_FCoactivity(dF_F):
     
     CONST = {}
 
-    CONST['STD_SIG_THRESHOLD'] = 2;
+    CONST['STD_SIG_THRESHOLD'] = PREPROCESSING_PARAMETERS['standard_deviations_threshold']; #= 2;
     # \_ CONST['STD_SIG_THRESHOLD']: dF/F-signal significance level in standard
     # deviation from the mean
 
@@ -213,9 +228,9 @@ def findSignificantDF_FCoactivity(dF_F):
 
     ## FIND SIGNIFICANT PEAKS IN THE THE COACTIVITY
 
-    CONST['SHUFFLE_ROUNDS'] = 1000;
+    CONST['SHUFFLE_ROUNDS'] = PREPROCESSING_PARAMETERS['shuffling_rounds']; #= 1000;
     # \_ CONST['SHUFFLE_ROUNDS']: rounds of shuffling for coactivity null model
-    CONST['SIGNIFICANCE_P'] = 0.05;
+    CONST['SIGNIFICANCE_P'] = PREPROCESSING_PARAMETERS['coactivity_significance_level']; #= 0.05;
     # \_ CONST['SIGNIFICANCE_P']: significance level for the dF/F-coactivity
 
     sig_dF_F_coactivity_threshold, _ = findSignificantCoactivity(sig_dF_F_activity, **{'shuffle_rounds': CONST['SHUFFLE_ROUNDS'], 'significance_p': CONST['SIGNIFICANCE_P']});
@@ -297,8 +312,8 @@ def findAssemblyPatterns(activityPatterns):
     ## > ANALYSE COMMUNITY STRUCTURE IN SIMILARITY GRAPH
     printConsoleSection('ANALYSE COMMUNITY STRUCTURE IN SIMILARITY GRAPH');
     
-    N_ITERATIONS = 5;
-    N_MONTECARLOSTEPS = 50000;
+    N_ITERATIONS = DETECTION_PARAMETERS['montecarlo_rounds'];# = 5;
+    N_MONTECARLOSTEPS = DETECTION_PARAMETERS['montecarlo_steps'];# = 50000;
         
     patternSimilarityAnalysis = analyseGraphCommunityStructure(patternSimilarityGraph, {'Iterations': N_ITERATIONS, 'MonteCarloSteps': N_MONTECARLOSTEPS, 'initialK': None});
     OUT['patternSimilarityAnalysis'] = patternSimilarityAnalysis;
@@ -330,7 +345,7 @@ def inferAssemblyPatterns(activityPatterns, patternSimilarityAnalysis):
     MINIMUM_SIZE = 5;
     STD_DEVIATIONS = 1.5;
 
-    ACTIVTY_THRESHOLD = 0.2;
+    ACTIVTY_THRESHOLD = DETECTION_PARAMETERS['affinity_threshold'];
 
     def discriminateSize():
 
@@ -413,7 +428,7 @@ def inferAssemblyPatterns(activityPatterns, patternSimilarityAnalysis):
     for r in range(len(assemblyPatterns)):
         if np.any(gAssignment == r):
             iAssemblyPatterns[r] = np.where(gAssignment == r)[0];
-            assemblyPatterns[r] = meanActivityPattern([activityPatterns[_] for _ in iAssemblyPatterns[r]], ACTIVTY_THRESHOLD);
+            assemblyPatterns[r] = meanActivityPattern([activityPatterns[_] for _ in iAssemblyPatterns[r]], ACTIVITY_THRESHOLD);
 
 
     assemblyPatterns = [_ for _ in assemblyPatterns if _ is not None];
@@ -1261,10 +1276,18 @@ def SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file):
             print('>> END PROGRAM', file=sys.stderr);
 
 
-def calcium_fluorescence_preprocessing(CALCIUM_FLUORESCENCE_file):
+def calcium_fluorescence_preprocessing(CALCIUM_FLUORESCENCE_file, standard_deviations_threshold=PREPROCESSING_PARAMETERS['standard_deviations_threshold'], shuffling_rounds=PREPROCESSING_PARAMETERS['shuffling_rounds'], coactivity_significance_level=PREPROCESSING_PARAMETERS['coactivity_significance_level']):
+    PREPROCESSING_PARAMETERS['standard_deviations_threshold'] = standard_deviations_threshold
+    PREPROCESSING_PARAMETERS['shuffling_rounds'] = shuffling_rounds
+    PREPROCESSING_PARAMETERS['coactivity_significance_level'] = coactivity_significance_level
+
     CALCIUM_FLUORESCENCE_PROCESSING(CALCIUM_FLUORESCENCE_file)
 
-def assembly_detection(ACTIVITY_RASTER_file):
+def assembly_detection(ACTIVITY_RASTER_file, montecarlo_rounds=DETECTION_PARAMETERS['montecarlo_rounds'], montecarlo_steps=DETECTION_PARAMETERS['montecarlo_steps'], affinity_threshold=DETECTION_PARAMETERS['affinity_threshold']):
+    DETECTION_PARAMETERS['montecarlo_rounds'] = montecarlo_rounds
+    DETECTION_PARAMETERS['montecarlo_steps'] = montecarlo_steps
+    DETECTION_PARAMETERS['affinity_threshold'] = affinity_threshold
+
     SGC_ASSEMBLY_DETECTION(ACTIVITY_RASTER_file)
 
 
@@ -1295,11 +1318,17 @@ if __name__ == "__main__":
 
     # *** 'preprocessing' ***
 
-    __subparser['preprocessing'].add_argument('input-file', type=str, metavar='<file name>', help='`*_CALCIUM-FLUORESCENCE.mat`-file.')
+    __subparser['preprocessing'].add_argument('input-file', type=str, metavar='<file name>', help='`*_CALCIUM-FLUORESCENCE.mat`-file')
+    __subparser['preprocessing'].add_argument('-S', '--standard-deviations-threshold', dest='standard_deviations_threshold', type=float, default=PREPROCESSING_PARAMETERS['standard_deviations_threshold'], metavar='<float>', help='standard deviation threshold for activity')
+    __subparser['preprocessing'].add_argument('-r', '--shuffling-rounds', dest='shuffling_rounds', type=int, default=PREPROCESSING_PARAMETERS['shuffling_rounds'], metavar='<int>', help='number of shuffling round to generate a coactivity null model')
+    __subparser['preprocessing'].add_argument('-p', '--coactivity-significance-level', dest='coactivity_significance_level', type=float, default=PREPROCESSING_PARAMETERS['coactivity_significance_level'], metavar='<float>', help='significance level for coactivity')
 
     # *** 'detection' ***
 
-    __subparser['detection'].add_argument('input-file', type=str, metavar='<file name>', help='`*_ACTIVITY-RASTER.mat`-file.')
+    __subparser['detection'].add_argument('input-file', type=str, metavar='<file name>', help='`*_ACTIVITY-RASTER.mat`-file')
+    __subparser['detection'].add_argument('-r', '--montecarlo-rounds', dest='montecarlo_rounds', type=int, default=DETECTION_PARAMETERS['montecarlo_rounds'], metavar='<int>', help='number of indepedent Monte Carlo rounds to estimate the number of assemblies')
+    __subparser['detection'].add_argument('-s', '--montecarlo-steps', dest='montecarlo_steps', type=int, default=DETECTION_PARAMETERS['montecarlo_steps'], metavar='<int>', help='number of steps in each indepedent Monte Carlo round')
+    __subparser['detection'].add_argument('-A', '--assembly-affinity-threshold', dest='affinity_threshold', type=float, default=DETECTION_PARAMETERS['affinity_threshold'], metavar='<float>', help='affinity threshold in the assembly construction')
 
     kwargs = vars(__parser.parse_args())
     
@@ -1309,23 +1338,29 @@ if __name__ == "__main__":
     __parser_subcommand = kwargs.pop('subcommand')
 
     if __parser_subcommand == 'preprocessing':
+        __input_file = kwargs.pop('input-file')
+        print(PREPROCESSING_PARAMETERS)
+        PREPROCESSING_PARAMETERS = dict(PREPROCESSING_PARAMETERS, **kwargs)
+        print(PREPROCESSING_PARAMETERS)
         pass
 
     if __parser_subcommand == 'detection':
+        __input_file = kwargs.pop('input-file')
+        print(kwargs)
+        DETECTION_PARAMETERS = dict(DETECTION_PARAMETERS, **kwargs)
+        print(DETECTION_PARAMETERS)
         pass
 
     # ********************************************************************************
     # Execute main function
-
+    sys.exit(0)
     SCRIPT_END_INDICATOR = True
     
     try:
         if __parser_subcommand == 'detection':
-            SGC_ASSEMBLY_DETECTION(kwargs['input-file'])
-            #print(kwargs['input-file'])
+            SGC_ASSEMBLY_DETECTION(__input_file)
         elif __parser_subcommand == 'preprocessing':
-            CALCIUM_FLUORESCENCE_PROCESSING(kwargs['input-file'])
-            #print(kwargs['input-file'])
+            CALCIUM_FLUORESCENCE_PROCESSING(__input_file)
             
     except:
         print(traceback.format_exc(), file=sys.stderr)
