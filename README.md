@@ -10,7 +10,7 @@ J. Mölter, L. Avitan, G. J. Goodhill. "Detecting neural assemblies in calcium i
 
 ## Overview
 
-This code implements the Similarity-Graph-Clustering (SGC) approach to detect neural assemblies in calcium imaging data in Python as opposed to MATLAB and by that make it available to a wider audience. Importantly, this implementation makes use of the original code by [Mark E. Newman](http://www-personal.umich.edu/~mejn/) to perform the statistical inference of the number of communities present in given graph written in C in the form of a compiled Python extension, which has the decisive advantage that the runtime is significantly reduced.
+This code implements the Similarity-Graph-Clustering (SGC) approach to detect neural assemblies in calcium imaging data in Python as opposed to MATLAB and by that make it available to a wider audience. Importantly, this implementation makes use of the original code by [Mark E. J. Newman](http://www-personal.umich.edu/~mejn/) to perform the statistical inference of the number of communities present in given graph written in C in the form of a compiled Python extension, which has the decisive advantage that the runtime is significantly reduced.
 
 ## Code
 
@@ -55,6 +55,8 @@ python SGC.py preprocessing /path/to/*_CALCIUM-FLUORESCENCE.mat
 
 This step produces an `*_ACTIVITY-RASTER.mat` file that holds the binary activity patterns and which is used to perform the assembly detection; see [GoodhillLab/neural-assembly-detection](https://github.com/GoodhillLab/neural-assembly-detection) for details.
 
+In order to change some of the parameters of the preprocessing step, they have been exposed as command line arguments. Specifically, these parameters are the standard-deviations threshold to determine active neurons, the number of shuffling rounds to estimate a coactivity null model and the coactivity significance level. Regarding their specifics including default values, see the help message (`python SGC.py preprocessing --help`).
+
 ### Assembly detection
 
 ```bash
@@ -63,7 +65,9 @@ python SGC.py detection /path/to/*_ACTIVITY-RASTER.mat
 
 This step produces an `*_SGC-ASSEMBLIES.mat` file that holds the results of the assembly detection; see [GoodhillLab/neural-assembly-detection](https://github.com/GoodhillLab/neural-assembly-detection) for details.
 
-Note: In order to efficiently run the assembly detection, the procedure to perform the statistical inference for the number of communities present in a graph, has to be compiled first. On Linux and macOS this should be straightforward, but requires Python C-development libraries as well as the GNU Scientific Library (GSL) to be present.
+In order to change some of the parameters of the detection step, they have been exposed as command line arguments. Specifically, these parameters are the number of Monte Carlo rounds and number of Monte Carlo steps in each round pertaining the inference of the number of communities in the graph of similar activity patterns and the assembly affinity threshold. Regarding their specifics including default values, see the help message (`python SGC.py detection --help`).
+
+Note: In order to efficiently run the assembly detection, the module to perform the statistical inference for the number of communities present in a graph that builds on original code that has been written by [Mark E. J. Newman](http://www-personal.umich.edu/~mejn/), has to be compiled first. On Linux and macOS this should be straightforward, but requires Python C-development libraries as well as the GNU Scientific Library (GSL) to be present.
 
 ```bash
 (cd Modules/estimate_py/c/; make)

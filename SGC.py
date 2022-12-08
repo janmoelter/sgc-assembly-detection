@@ -1301,18 +1301,18 @@ if __name__ == "__main__":
 
 
     __parser = argparse.ArgumentParser(
-        description='Detection of neural assemblies the Similarity-Graph-Clustering (SGC) algorithm.',
+        description='Detection of neural assemblies the Similarity-Graph-Clustering (SGC) algorithm. The whole process divided into a preprocessing and the actual detection step that can be accessed through individual interfaces.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    __subparsers = __parser.add_subparsers(title='subcommands',dest='subcommand', required=True, help='')
+    __subparsers = __parser.add_subparsers(title='subcommands',dest='subcommand', required=True, help='selection of the interface to perform either the preprocessing or the assembly detection')
 
     __subparser = dict()
     __subparser['preprocessing'] = __subparsers.add_parser('preprocessing',
-        description='Transforms the calcium fluorescence signal into a raster of binary activity patterns.',
+        description='Preprocessing interface of the Similarity-Graph-Clustering (SGC) algorithm to transforms the calcium fluorescence signal into a raster of binary activity patterns.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     __subparser['detection'] = __subparsers.add_parser('detection',
-        description='Performs the assembly detection using Similarity-Graph-Clustering (SGC) algorithm.',
+        description='Assembly detection interface of the Similarity-Graph-Clustering (SGC) algorithm. Successfully running the detection requires having performed some preprocessing.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
