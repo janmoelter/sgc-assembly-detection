@@ -1339,21 +1339,17 @@ if __name__ == "__main__":
 
     if __parser_subcommand == 'preprocessing':
         __input_file = kwargs.pop('input-file')
-        print(PREPROCESSING_PARAMETERS)
         PREPROCESSING_PARAMETERS = dict(PREPROCESSING_PARAMETERS, **kwargs)
-        print(PREPROCESSING_PARAMETERS)
         pass
 
     if __parser_subcommand == 'detection':
         __input_file = kwargs.pop('input-file')
-        print(kwargs)
         DETECTION_PARAMETERS = dict(DETECTION_PARAMETERS, **kwargs)
-        print(DETECTION_PARAMETERS)
         pass
 
     # ********************************************************************************
     # Execute main function
-    sys.exit(0)
+    
     SCRIPT_END_INDICATOR = True
     
     try:
