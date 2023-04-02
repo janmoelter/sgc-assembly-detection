@@ -345,7 +345,7 @@ def inferAssemblyPatterns(activityPatterns, patternSimilarityAnalysis):
     MINIMUM_SIZE = 5;
     STD_DEVIATIONS = 1.5;
 
-    ACTIVTY_THRESHOLD = DETECTION_PARAMETERS['affinity_threshold'];
+    ACTIVITY_THRESHOLD = DETECTION_PARAMETERS['affinity_threshold'];
 
     def discriminateSize():
 
@@ -373,7 +373,7 @@ def inferAssemblyPatterns(activityPatterns, patternSimilarityAnalysis):
 
     for r in range(len(prelimAssemblyPatterns)):
         if np.any(gAssignment == r):
-            prelimAssemblyPatterns[r] = meanActivityPattern(list(np.array(activityPatterns)[gAssignment == r,:]), ACTIVTY_THRESHOLD);
+            prelimAssemblyPatterns[r] = meanActivityPattern(list(np.array(activityPatterns)[gAssignment == r,:]), ACTIVITY_THRESHOLD);
             prelimAssemblyPatterns[r] = (prelimAssemblyPatterns[r] != 0).astype('float');
         else:
             prelimAssemblyPatterns[r] = np.zeros(len(activityPatterns[0]));
@@ -396,7 +396,7 @@ def inferAssemblyPatterns(activityPatterns, patternSimilarityAnalysis):
 
     for r in range(len(prelimAssemblyPatterns)):
         if np.any(gAssignment == r):
-            prelimAssemblyPatterns[r] = meanActivityPattern(list(np.array(activityPatterns)[gAssignment == r,:]), ACTIVTY_THRESHOLD);
+            prelimAssemblyPatterns[r] = meanActivityPattern(list(np.array(activityPatterns)[gAssignment == r,:]), ACTIVITY_THRESHOLD);
             prelimAssemblyPatterns[r] = (prelimAssemblyPatterns[r] != 0).astype('float');
         else:
             prelimAssemblyPatterns[r] = np.zeros(len(activityPatterns[0]));
