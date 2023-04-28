@@ -101,15 +101,19 @@ def print_timeinterval(dT):
         
         for j in range(len(mult)):
             _timevec[j], t = divmod(t, mult[j:].prod());
+            
+        _timevec[-1] += t
         
         return _timevec
 
+    dTx = timevec(abs(dT));
     
-    dTx = timevec(dT);
+    if dT != 0:
+        i = np.where(dTx > 0)[0][0]
+    else:
+        i = -1
     
-    i = np.where(dTx > 0)[0][0]
-    
-    v = np.array([[1, 1/(24), 1/(24 * 60), 1/(24 * 60 * 60)], [0, 1, 1/(60), 1/(60 * 60)], [0, 0, 1, 1/(60)], [0, 0, 0, 1]]) @ dTx
+    v = [+1,-1][dT < 0] * np.array([[1, 1/(24), 1/(24 * 60), 1/(24 * 60 * 60)], [0, 1, 1/(60), 1/(60 * 60)], [0, 0, 1, 1/(60)], [0, 0, 0, 1]]) @ dTx
     u = np.array(['d', 'h', 'min', 's'])
     
     return '{:.1f}{:s}'.format(v[i], u[i])
