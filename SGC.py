@@ -700,6 +700,10 @@ def analyseGraphCommunityStructure(graph , opts=None):
         print(' Number of vertices: {:d}'.format(graph.number_of_nodes()), file=sys.stdout);
         print(' Number of edges: {:d}'.format(graph.number_of_edges()), file=sys.stdout);
         
+        if graph.number_of_nodes() < 20:
+            print('', file=sys.stdout);
+            print(' ==> The graph is very small and results may be inaccurate.', file=sys.stdout)
+        
         print('', file=sys.stdout);
         
         if opts_['RNGSeed'] is None:
@@ -863,7 +867,11 @@ def computeGraphCommunityStructureMarginals(estimate_output):
         EQ_sample = estimate_output_E[math.floor(len(estimate_output_E)/2):];
         
         i_EQ = estimate_output_E > EQ_sample.mean() - 2 * np.abs(EQ_sample - EQ_sample.mean()).max();
-        i_EQ[:np.where(np.invert(i_EQ))[0][-1]] = False;
+        try:
+            i_EQ[:np.where(np.invert(i_EQ))[0][-1]] = False;
+        except:
+            # No equilibrating phase apparent in the samples that needs to be cut off
+            pass
         
         K_ = estimate_output[i]['k'];
         K = np.concatenate([K , K_[i_EQ]]);
